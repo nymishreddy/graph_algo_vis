@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import simpledialog
-#from graph_data import GraphData
-from algorithms import bfs_level_by_level
+from algorithms import bfs_level_by_level, dfs_visual, dijkstra_visual, topo_sort_visual
+
 
 class GraphVisualizer:
     def __init__(self):
@@ -13,13 +13,13 @@ class GraphVisualizer:
         self.canvas = tk.Canvas(self.root, width=800, height=600, bg="white")
         self.canvas.pack()
 
-        self.directed_var = tk.BooleanVar()
-        self.weighted_var = tk.BooleanVar()
-
-        tk.Checkbutton(self.root, text="Directed", variable=self.directed_var).pack(side=tk.LEFT)
-        tk.Checkbutton(self.root, text="Weighted", variable=self.weighted_var).pack(side=tk.LEFT)
+        tk.Checkbutton(self.root, text="Directed", variable=self.graph.directed_var).pack(side=tk.LEFT)
+        tk.Checkbutton(self.root, text="Weighted", variable=self.graph.weighted_var).pack(side=tk.LEFT)
 
         tk.Button(self.root, text="Run BFS", command=self.run_bfs).pack(side=tk.LEFT)
+        tk.Button(self.root, text="Run DFS", command=self.run_dfs).pack(side=tk.LEFT)
+        tk.Button(self.root, text="Run Dijkstra", command=self.run_dijkstra).pack(side=tk.LEFT)
+        tk.Button(self.root, text="Run Topo Sort", command=self.run_topo_sort).pack(side=tk.LEFT)
 
         self.canvas.bind("<Button-1>", self.on_canvas_click)
 
@@ -50,7 +50,7 @@ class GraphVisualizer:
                 x2, y2 = self.graph.nodes[v]
 
                 weight = 1
-                if self.weighted_var.get():
+                if self.graph.weighted_var.get():
                     weight = simpledialog.askinteger("Edge Weight", f"Weight from {u} to {v}:", minvalue=1)
                     if weight is None:
                         self.graph.selected_node = None
@@ -62,18 +62,18 @@ class GraphVisualizer:
                 ax1, ay1 = x1 + offset * cos(angle), y1 + offset * sin(angle)
                 ax2, ay2 = x2 - offset * cos(angle), y2 - offset * sin(angle)
 
-                if self.directed_var.get():
+                if self.graph.directed_var.get():
                     self.canvas.create_line(ax1, ay1, ax2, ay2, width=2, fill="black", arrow=tk.LAST)
                 else:
                     self.canvas.create_line(x1, y1, x2, y2, width=2, fill="black")
 
-                if self.weighted_var.get():
+                if self.graph.weighted_var.get():
                     label_x = (x1 + x2) // 2 + (y2 - y1) // 10
                     label_y = (y1 + y2) // 2 - (x2 - x1) // 10
                     self.canvas.create_text(label_x, label_y, text=str(weight), font=("Arial", 20), fill="black")
 
                 self.graph.adj[u].append((v, weight))
-                if not self.directed_var.get():
+                if not self.graph.directed_var.get():
                     self.graph.adj[v].append((u, weight))
 
                 self.graph.edges.append((u, v, weight))
@@ -82,8 +82,18 @@ class GraphVisualizer:
     def run_bfs(self):
         bfs_level_by_level(self.canvas, self.graph)
 
+    def run_dfs(self):
+        dfs_visual(self.canvas, self.graph)
+
+    def run_dijkstra(self):
+        dijkstra_visual(self.canvas, self.graph, self.graph.weighted_var.get())
+
+    def run_topo_sort(self):
+        topo_sort_visual(self.canvas, self.graph)
+
     def run(self):
         self.root.mainloop()
+
 
 class GraphData:
     def __init__(self):
@@ -94,3 +104,6 @@ class GraphData:
         self.adj = {}
         self.node_count = 0
         self.selected_node = None
+
+        self.directed_var = tk.BooleanVar()
+        self.weighted_var = tk.BooleanVar()
