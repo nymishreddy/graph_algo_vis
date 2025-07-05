@@ -31,12 +31,3 @@ Built to:
 
 - **Thummaluri Nymish Kumar Reddy** ([@nymishreddy](https://github.com/nymishreddy))  
 - **Harihara Varma** ([@Varma-99](https://github.com/Varma-99))
-
-## 🔮 Future Improvements
-
-- Add support for:
-  - Union-Find / Disjoint Set Union
-  - SPFA (Shortest Path Faster Algorithm)
-  - Bellman-Ford Algorithm
-- Graph save/load functionality
-- Enhanced UI responsiveness and animations
